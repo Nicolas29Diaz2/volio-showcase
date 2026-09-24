@@ -41,48 +41,48 @@ The following diagram illustrates the end-to-end data flow, asynchronous decoupl
 
 ```mermaid
 flowchart TB
-    subgraph Client ["Client Tier (Next.js 16 + React 19)"]
-        UI["Studio & Experience UI (Tailwind CSS 4)"]
-        Canvas2D["2D Canvas Engine (Konva / react-konva)"]
-        ThreeViewer["3D Interactive Viewer (Three.js / React Three Fiber)"]
-        State["Reactive State Management (Zustand 5)"]
+    subgraph Client ["Client Tier - Next.js 16 and React 19"]
+        UI["Studio & Experience UI - Tailwind CSS 4"]
+        Canvas2D["2D Canvas Engine - Konva / react-konva"]
+        ThreeViewer["3D Interactive Viewer - Three.js / React Three Fiber"]
+        State["Reactive State Management - Zustand 5"]
     end
 
-    subgraph Edge ["Edge & CDN Layer"]
-        CFDNS["Cloudflare Edge Network & DNS"]
-        R2["Cloudflare R2 Object Storage<br/>(Zero Egress Cost Architecture)"]
+    subgraph Edge ["Edge and CDN Layer"]
+        CFDNS["Cloudflare Edge Network and DNS"]
+        R2["Cloudflare R2 Object Storage<br/>Zero Egress Cost Architecture"]
     end
 
-    subgraph Backend ["Backend Cluster (AWS EC2 / Docker)"]
+    subgraph Backend ["Backend Cluster - AWS EC2 / Docker"]
         Gateway["NestJS 11 Modular API Gateway"]
-        AuthGuard["Dual-Token JWT & Throttling Guards"]
+        AuthGuard["Dual-Token JWT and Throttling Guards"]
         
         subgraph QueueSystem ["Asynchronous Job Engine"]
             RedisQueue[("Redis 7 BullMQ Broker")]
-            Worker["Album Generation Worker<br/>(Concurrency: 3)"]
+            Worker["Album Generation Worker<br/>Concurrency: 3"]
         end
 
         subgraph Adapters ["External Integration Adapters"]
-            LLMAdapter["Multimodal AI Service<br/>(Google Gemini / OpenRouter)"]
-            R2Adapter["S3 / R2 Storage Adapter<br/>(@aws-sdk/client-s3)"]
+            LLMAdapter["Multimodal AI Service<br/>Google Gemini / OpenRouter"]
+            R2Adapter["S3 and R2 Storage Adapter<br/>AWS SDK v3"]
             BillingAdapter["Lemon Squeezy Webhook Engine"]
         end
     end
 
     subgraph Persistence ["Persistence Tier"]
-        NeonDB[("PostgreSQL Serverless (Neon)<br/>Prisma ORM 7 Connection Pool")]
+        NeonDB[("PostgreSQL Serverless Neon<br/>Prisma ORM 7 Connection Pool")]
     end
 
     %% Client Interactions
     UI -->|1. Direct Upload via Presigned PUT URL| R2
     ThreeViewer -.->|Stream Dynamic Video Textures| R2
-    UI -->|2. REST / HTTPS Mutations & Queries| Gateway
+    UI -->|2. REST / HTTPS Mutations and Queries| Gateway
 
     %% Backend Flows
-    Gateway -->|3. Read / Write Project Metadata| NeonDB
-    Gateway -->|4. Enqueue Long-Running Job (202 Accepted)| RedisQueue
-    RedisQueue -->|5. Dequeue & Orchestrate Pipeline| Worker
-    Worker -->|6. Multimodal Reasoning & Layouts| LLMAdapter
+    Gateway -->|3. Read and Write Project Metadata| NeonDB
+    Gateway -->|4. Enqueue Long-Running Job - HTTP 202 Accepted| RedisQueue
+    RedisQueue -->|5. Dequeue and Orchestrate Pipeline| Worker
+    Worker -->|6. Multimodal Reasoning and Layouts| LLMAdapter
     Worker -->|7. Persist Structured Canvas State| NeonDB
     Gateway -->|8. Generate Signed Upload URLs| R2Adapter
     R2Adapter -.->|Presigned PUT Generation| R2

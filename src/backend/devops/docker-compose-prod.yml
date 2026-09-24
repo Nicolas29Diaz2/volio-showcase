@@ -1,0 +1,51 @@
+# ==============================================================================
+# Production Docker Compose Specification
+# Orchestrates Redis 7 In-Memory Broker & Containerized NestJS API Service
+# ==============================================================================
+name: volio-prod
+
+services:
+  # -----------------------------------------------------------
+  # 1. Asynchronous In-Memory Queue & Cache: Redis 7 Alpine
+  # -----------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: volio_redis
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:6379:6379' # Bound strictly to localhost for internal network isolation
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    networks:
+      - volio_network
+
+  # -----------------------------------------------------------
+  # 2. Application Engine: NestJS Modular API & BullMQ Worker
+  # -----------------------------------------------------------
+  backend:
+    image: ghcr.io/nicolas29diaz2/volio-back:latest
+    container_name: volio_backend
+    restart: always
+    env_file:
+      - .env.production
+    ports:
+      - '3001:3001'
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - volio_network
+
+networks:
+  volio_network:
+    driver: bridge
+
+volumes:
+  redis_data:
+    driver: local

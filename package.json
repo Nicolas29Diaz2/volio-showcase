@@ -1,0 +1,27 @@
+{
+  "name": "volio-showcase",
+  "version": "1.0.0",
+  "description": "Architectural showcase, system design, and engineering patterns of Volio (Interactive 3D & Multimodal AI SaaS Platform)",
+  "author": "Nicolas Diaz Santos <diazsantosnicolas10@gmail.com> (https://linkedin.com/in/nicolassdiazs)",
+  "license": "MIT",
+  "homepage": "https://volio-studio.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Nicolas29Diaz2/volio-showcase.git"
+  },
+  "keywords": [
+    "architecture-showcase",
+    "system-design",
+    "nestjs",
+    "nextjs",
+    "react-three-fiber",
+    "threejs",
+    "bullmq",
+    "redis",
+    "cloudflare-r2",
+    "multimodal-ai",
+    "docker",
+    "aws-ec2",
+    "hexagonal-architecture"
+  ]
+}
